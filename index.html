@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>အထူးကမ်းလှမ်းချက်!</title>
+    <style>
+        /* နောက်ခံ iPhone 15 ပုံနှင့် အပြင်အဆင် */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden; /* ခလုတ်ပြေးတဲ့အခါ Scroll မပေါ်အောင် */
+        }
+
+        /* နောက်ခံပုံပေါ်က အမည်းရောင် အရိပ် (စာဖတ်ရလွယ်အောင်) */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        /* အလယ်က ဖန်သားပြင် (Glassmorphism) ဒီဇိုင်း */
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+            max-width: 400px;
+            width: 90%;
+            z-index: 2;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* ခလုတ်များ အပြင်အဆင် */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        button {
+            padding: 12px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #btn-yes {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+        }
+
+        #btn-yes:active {
+            transform: scale(0.95);
+        }
+
+        #btn-no {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 75, 43, 0.4);
+            /* ခလုတ်ကို နေရာရွှေ့နိုင်ရန် Transition ထည့်ထားသည် */
+            transition: all 0.3s ease; 
+        }
+
+        /* ဆုပေါက်သော စာမျက်နှာကို ဖျောက်ထားရန် */
+        #result-card {
+            display: none;
+        }
+
+        .heart {
+            font-size: 50px;
+            margin-bottom: 10px;
+            animation: beat 1s infinite alternate;
+        }
+
+        @keyframes beat {
+            to { transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <!-- ပထမဆုံး ပေါ်မည့် အမေး စာမျက်နှာ -->
+    <div class="card" id="main-card">
+        <h2>📱 iPhone 15 Pro Max</h2>
+        <p>iphone 15 လေး အကိုကြီးကို 6000 ဘတ်နဲ့ ရောင်းမယ်</p>
+        <div class="btn-container">
+            <button id="btn-yes">Yes</button>
+            <button id="btn-no">No</button>
+        </div>
+    </div>
+
+    <!-- Yes နှိပ်လိုက်မှ ပေါ်လာမည့် စာမျက်နှာ -->
+    <div class="card" id="result-card">
+        <div class="heart">❤️</div>
+        <h2>ကျေးဇူးပါ ညီလေး!</h2>
+        <p>ငါ့ညီလေးက ဒီကမ္ဘာမှာ လူသားအဆန်ဆုံးနဲ့ လူသားအပီသဆုံးလူပဲ။ အကိုကြီးက စတာပါ။ 😉</p>
+    </div>
+
+    <script>
+        const btnNo = document.getElementById('btn-no');
+        const btnYes = document.getElementById('btn-yes');
+        const mainCard = document.getElementById('main-card');
+        const resultCard = document.getElementById('result-card');
+
+        // No ခလုတ်ကို နေရာရွှေ့မည့် Function
+        function moveButton() {
+            // မျက်နှာပြင်၏ အကျယ်နှင့် အမြင့်ကို ယူပါ
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            // ခလုတ်၏ အရွယ်အစားကို ဖယ်ထုတ်ပြီး မျက်နှာပြင်အတွင်း ကျပန်း (Random) နေရာယူပါ
+            const randomX = Math.floor(Math.random() * (windowWidth - 100));
+            const randomY = Math.floor(Math.random() * (windowHeight - 50));
+
+            // ခလုတ်ကို Fixed ဖြစ်စေပြီး Random နေရာသို့ ပို့ပါ
+            btnNo.style.position = 'fixed';
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+        }
+
+        // ကွန်ပျူတာဖြင့် Mouse တင်လိုက်သည်နှင့် ပြေးရန်
+        btnNo.addEventListener('mouseover', moveButton);
+        
+        // ဖုန်းဖြင့် ထိလိုက်သည်နှင့် ပြေးရန်
+        btnNo.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // ဖုန်းတွင် ထိလိုက်သည့်အခါ အခြားအရာများ မဖြစ်စေရန်
+            moveButton();
+        });
+
+        // Yes ခလုတ် နှိပ်လိုက်လျှင် စာပြောင်းရန်
+        btnYes.addEventListener('click', () => {
+            mainCard.style.display = 'none';
+            resultCard.style.display = 'block';
+        });
+    </script>
+
+</body>
+</html>
